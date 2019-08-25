@@ -14,8 +14,8 @@ export default class SignIn extends Component{
     constructor(props){
         super(props);
         this.state={
-            email:'bistishu1@gmail.com',
-            password:'Eshant@1'
+            email:'',
+            password:''
         }
     }
 
@@ -34,6 +34,7 @@ export default class SignIn extends Component{
                  })
                  if(user.length!=0){
                      this.props.navigation.navigate('TaskList')
+                     this.setState({email:'',password:''})
                  }
                  else{
                      alert("Username or password is wrong")

@@ -1,4 +1,4 @@
-import {ADD_TASK_MODAL} from './actionTypes'
+import {ADD_TASK_MODAL,ADD_TASK} from './actionTypes'
 
 export function toggleModal(val){
     return{
@@ -6,3 +6,10 @@ export function toggleModal(val){
       val
     }
   }
+
+export function addNewTask(item){
+return{
+    type:ADD_TASK,
+    item
+}
+}

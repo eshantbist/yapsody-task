@@ -38,6 +38,7 @@ export default class SignUp extends Component{
                     credentialsArray.push(this.state)
                     const credentials = JSON.stringify(credentialsArray)
                     AsyncStorage.setItem('credentials',credentials);
+                    this.setState({name:'',password:'',username:''})
                     alert("Signed up successfully")
                 }
                 else{
