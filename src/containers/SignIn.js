@@ -14,8 +14,8 @@ export default class SignIn extends Component{
     constructor(props){
         super(props);
         this.state={
-            email:'',
-            password:''
+            email:'bistishu1@gmail.com',
+            password:'Eshant@1'
         }
     }
 
@@ -27,13 +27,17 @@ export default class SignIn extends Component{
         const credentials = await AsyncStorage.getItem('credentials');
         let credentialArray = JSON.parse(credentials);
         const {email,password} = this.state;
-        console.log(credentialArray);
         if(email!='' && password!=''){
-            let user = credentialArray.filter(item=>{
-               return (item.username == email && item.password == password)
-            })
-            if(user.length!=0){
-                alert("Signed In successfull")
+            if(credentialArray!=null){
+                let user = credentialArray.filter(item=>{
+                    return (item.username == email && item.password == password)
+                 })
+                 if(user.length!=0){
+                     this.props.navigation.navigate('TaskList')
+                 }
+                 else{
+                     alert("Username or password is wrong")
+                 }
             }
             else{
                 alert("Username or password is wrong")

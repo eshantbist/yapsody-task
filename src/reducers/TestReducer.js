@@ -1,12 +1,13 @@
 const initialState = {
-  tasks:{},
+  isModalOpen:false,
 }
 
 const TestReducer=(state = initialState, action) => {
   switch(action.type) {
-    case 'ADD_TASKS':
+    case 'ADD_TASK_MODAL':
       return {
-        ...initialState,
+        ...state,
+        isModalOpen:action.val,
       }
 
     default:

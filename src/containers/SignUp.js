@@ -13,9 +13,9 @@ export default class SignUp extends Component{
     constructor(props){
         super(props);
         this.state={
-            name:'Eshant',
-            username:'bistishu1@gmail.com',
-            password:'Eshant@1',
+            name:'',
+            username:'',
+            password:'',
         }
     }
 
@@ -28,20 +28,28 @@ export default class SignUp extends Component{
         if(name!='' && username!='' && password!=''){
             const credentialsStorage = await AsyncStorage.getItem('credentials');
             let  credentialsArray = JSON.parse(credentialsStorage);
-            console.log(credentialsArray);
 
-            let userCheck = credentialsArray.filter(item=>{
-                return(item.username==username)
-            })
-
-            if(userCheck.length==0){
-                credentialsArray.push(this.state)
-                const credentials = JSON.stringify(credentialsArray)
-                AsyncStorage.setItem('credentials',credentials);
-                alert("Signed up successfully")
+            if(credentialsArray!=null){
+                let userCheck = credentialsArray.filter(item=>{
+                    return(item.username==username)
+                })
+    
+                if(userCheck.length==0){
+                    credentialsArray.push(this.state)
+                    const credentials = JSON.stringify(credentialsArray)
+                    AsyncStorage.setItem('credentials',credentials);
+                    alert("Signed up successfully")
+                }
+                else{
+                    alert('User already there');
+                }
             }
             else{
-                alert('User already there');
+                let userArray = [];
+                userArray.push(this.state);
+                let firstCredentials = JSON.stringify(userArray)
+                AsyncStorage.setItem('credentials',firstCredentials);
+                alert("Signed up successfully")
             }
         }
         else{
@@ -69,7 +77,7 @@ export default class SignUp extends Component{
                 </View>
                 <View style={styles.inputWrap}>
                   <TextInput
-                    placeholder="Username"
+                    placeholder="Email"
                     value={username}
                     onChangeText={(val)=>{this.setState({username:val})}}
                     style={styles.input}
