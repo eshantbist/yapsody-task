@@ -5,7 +5,9 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 
 export default class SignUp extends Component{
@@ -16,6 +18,7 @@ export default class SignUp extends Component{
             name:'',
             username:'',
             password:'',
+            loading:false,
         }
     }
 
@@ -24,6 +27,7 @@ export default class SignUp extends Component{
     }
 
     async signUp(){
+        this.setState({loading:true})
         const {name,username,password} = this.state;
         if(name!='' && username!='' && password!=''){
             const credentialsStorage = await AsyncStorage.getItem('credentials');
@@ -39,10 +43,10 @@ export default class SignUp extends Component{
                     const credentials = JSON.stringify(credentialsArray)
                     AsyncStorage.setItem('credentials',credentials);
                     this.setState({name:'',password:'',username:''})
-                    alert("Signed up successfully")
+                    Alert.alert("Signed up successfully")
                 }
                 else{
-                    alert('User already there');
+                    Alert.alert('User already there');
                 }
             }
             else{
@@ -50,17 +54,28 @@ export default class SignUp extends Component{
                 userArray.push(this.state);
                 let firstCredentials = JSON.stringify(userArray)
                 AsyncStorage.setItem('credentials',firstCredentials);
-                alert("Signed up successfully")
+                this.setState({name:'',password:'',username:''})
+                Alert.alert("Signed up successfully")
             }
         }
         else{
-            alert("Fill All the fields")
+            Alert.alert("Fill All the fields")
         }
+        this.setState({loading:false})
 
     }
 
     render(){
         const {name,password,username} = this.state;
+
+        if(this.state.loading){
+            return(
+                <View style={styles.loadingStyle}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            )
+        }
+
         return (
             <View
               style={[styles.background, styles.container]}
@@ -100,8 +115,8 @@ export default class SignUp extends Component{
                     <Text style={styles.buttonText}>Sign Up</Text>
                   </View>
                 </TouchableOpacity>
-                <Text style={{alignSelf:'center',fontSize:18,color:'gray'}}>
-                    Already have an account? <Text style={{textDecorationLine: 'underline',color:'#0088cc'}} onPress={()=>this.goToSignIn()}>Sign In</Text>
+                <Text style={styles.bottomText}>
+                    Already have an account? <Text style={styles.signInText} onPress={()=>this.goToSignIn()}>Sign In</Text>
                 </Text>
               </View>
               <View style={styles.container} />
@@ -146,4 +161,18 @@ export default class SignUp extends Component{
       color: "#FFF",
       fontSize: 18
     },
+    bottomText:{
+        alignSelf:'center',
+        fontSize:18,
+        color:'gray'
+    },
+    loadingStyle:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    signInText:{
+        textDecorationLine: 'underline',
+        color:'#0088cc'
+    }
   });

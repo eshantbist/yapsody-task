@@ -5,9 +5,10 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  ActivityIndicator,
+  Alert
 } from 'react-native';
-//import console = require('console');
 
 export default class SignIn extends Component{
 
@@ -15,8 +16,18 @@ export default class SignIn extends Component{
         super(props);
         this.state={
             email:'',
-            password:''
+            password:'',
+            loading:false
         }
+    }
+
+    componentDidMount=async()=>{
+        this.setState({loading:true})
+        const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+        if(isLoggedIn!=null){
+            this.props.navigation.navigate('TaskList');
+        }
+        this.setState({loading:false})
     }
 
     goToSignUp(){
@@ -24,6 +35,7 @@ export default class SignIn extends Component{
     }
 
     async signIn(){
+        this.setState({loading:true})
         const credentials = await AsyncStorage.getItem('credentials');
         let credentialArray = JSON.parse(credentials);
         const {email,password} = this.state;
@@ -33,24 +45,33 @@ export default class SignIn extends Component{
                     return (item.username == email && item.password == password)
                  })
                  if(user.length!=0){
+                     AsyncStorage.setItem('isLoggedIn','loggedIn');
                      this.props.navigation.navigate('TaskList')
                      this.setState({email:'',password:''})
                  }
                  else{
-                     alert("Username or password is wrong")
+                     Alert.alert("Username or password is wrong")
                  }
             }
             else{
-                alert("Username or password is wrong")
+                Alert.alert("Username or password is wrong")
             }
         }
         else{
-            alert("Fill All the fields")
+            Alert.alert("Fill All the fields")
         }
+        this.setState({loading:false})
     }
 
     render(){
         const {email,password} = this.state;
+        if(this.state.loading){
+            return(
+                <View style={styles.loadingStyle}>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View>
+            )
+        }
         return (
             <View
               style={[styles.background, styles.container]}
@@ -82,8 +103,8 @@ export default class SignIn extends Component{
                     <Text style={styles.buttonText}>Sign In</Text>
                   </View>
                 </TouchableOpacity>
-                <Text style={{alignSelf:'center',fontSize:18,color:'gray'}}>
-                    Don't have an account? <Text style={{textDecorationLine: 'underline',color:'#0088cc'}} onPress={()=>this.goToSignUp()}>Sign Up</Text>
+                <Text style={styles.bottomText}>
+                    Don't have an account? <Text style={styles.signUpText} onPress={()=>this.goToSignUp()}>Sign Up</Text>
                 </Text>
               </View>
               <View style={styles.container} />
@@ -128,4 +149,18 @@ export default class SignIn extends Component{
       color: "#FFF",
       fontSize: 18
     },
+    bottomText:{
+        alignSelf:'center',
+        fontSize:18,
+        color:'gray'
+    },
+    loadingStyle:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    signUpText:{
+        textDecorationLine: 'underline',
+        color:'#0088cc'
+    }
   });

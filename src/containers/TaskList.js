@@ -4,6 +4,7 @@ import TaskItem from '../components/TaskItem'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {toggleModal,addNewTask} from '../actions'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 class TaskList extends Component{
 
@@ -33,20 +34,24 @@ class TaskList extends Component{
         }
     }
 
+    closeModal=()=>{
+        this.props.toggleModal(false); this.setState({taskName:'',taskDescription:''})
+    }
+
     render(){
         const {TestReducer:{isModalOpen,tasks}}=this.props;
         return(
-            <SafeAreaView style={{flex:1}}>
-                <View style={{flexDirection:'row',justifyContent:'space-between',height:50,borderBottomWidth:1,paddingHorizontal:10}}>
-                    <TouchableOpacity style={{justifyContent:'center'}} onPress={()=>{
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.hamBurger} onPress={()=>{
                         this.props.navigation.openDrawer()}}>
-                        <Text>Open Drawer</Text>
+                        <FontAwesome name='bars' size={25} color="#a6a6a6"/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={()=>this.addTask()} style={{justifyContent:'center'}}>
-                        <Text>Add Todo</Text>
+                    <TouchableOpacity onPress={()=>this.addTask()} style={styles.hamBurger}>
+                        <FontAwesome name='plus' size={25} color="#1a1aff"/>
                     </TouchableOpacity>
                 </View>
-                <View style={{marginHorizontal:15,marginTop:20,marginBottom:50}}>
+                <View style={styles.flatListContainer}>
                     <FlatList
                         data={tasks}
                         keyExtractor={(item, index) => index.toString()}
@@ -57,13 +62,13 @@ class TaskList extends Component{
                 animationType="fade"
                 transparent={true}
                 visible={isModalOpen}
-                onRequestClose={() => {this.props.toggleModal(false); this.setState({taskName:'',taskDescription:''})}}>
+                onRequestClose={() => {this.closeModal()}}>
                 <View style={{flex:1,backgroundColor:'rgba(0,0,0,0.4)'}}>
-                  <TouchableHighlight style={{flex:1}} onPress={() => {this.props.toggleModal(false);this.setState({taskName:'',taskDescription:''})}}>
-                    <View style={{flex:1,justifyContent:'center',marginHorizontal:10,}}>
+                  <TouchableHighlight style={{flex:1}} onPress={() => {this.closeModal()}}>
+                    <View style={{flex:1,justifyContent:'center',marginHorizontal:10}}>
                       <View style={{shadowOffset: { width: 8, height: 8 },shadowColor: 'gray',shadowOpacity: 0.8,elevation: 2,borderRadius:14,borderWidth:4,borderColor:'#0099cc',borderColor: 'rgba(0,0,0,0.2)'}}>
                         <View style={{borderRadius:10,padding:50,backgroundColor:'white'}}>
-                        <Text style={{alignSelf:'flex-end'}} onPress={() => {this.props.toggleModal(false);this.setState({taskName:'',taskDescription:''})}}>
+                        <Text style={{alignSelf:'flex-end'}} onPress={() => {this.closeModal()}}>
                             CLOSE
                         </Text>
                         <View>
@@ -117,12 +122,20 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor:'#FFF'
     },
-    background: {
-      width: null,
-      height: null
+    header: {
+        flexDirection:'row',
+        justifyContent:'space-between',
+        height:50,
+        borderBottomWidth:1,
+        paddingHorizontal:10
     },
-    wrapper: {
-      paddingHorizontal: 15,
+    hamBurger:{
+        justifyContent:'center'
+    },
+    flatListContainer:{
+        marginHorizontal:15,
+        marginTop:20,
+        marginBottom:50
     },
     inputWrap: {
       flexDirection: "row",
@@ -136,16 +149,5 @@ const styles = StyleSheet.create({
       flex: 1,
       paddingHorizontal: 10,
       backgroundColor: '#FFF'
-    },
-    button: {
-      backgroundColor: "#0088cc",
-      paddingVertical: 15,
-      marginVertical: 15,
-      alignItems: "center",
-      justifyContent: "center"
-    },
-    buttonText: {
-      color: "#FFF",
-      fontSize: 18
     },
   });
